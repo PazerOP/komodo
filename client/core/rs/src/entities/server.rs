@@ -267,7 +267,9 @@ pub struct ServerConfig {
 /// set a property, the server default is used instead of the
 /// hardcoded default.
 #[typeshare]
-#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
+#[derive(
+  Debug, Clone, Default, Serialize, Deserialize, PartialEq,
+)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct StackDefaults {
   /// Default for stack `auto_pull`. Hardcoded default: true.

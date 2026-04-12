@@ -130,20 +130,14 @@ impl ResourceSyncTrait for Stack {
     }
 
     apply(&mut config.auto_pull, &defaults.auto_pull);
-    apply(
-      &mut config.poll_for_updates,
-      &defaults.poll_for_updates,
-    );
+    apply(&mut config.poll_for_updates, &defaults.poll_for_updates);
     apply(&mut config.auto_update, &defaults.auto_update);
     apply(
       &mut config.auto_update_all_services,
       &defaults.auto_update_all_services,
     );
     apply(&mut config.send_alerts, &defaults.send_alerts);
-    apply(
-      &mut config.webhook_enabled,
-      &defaults.webhook_enabled,
-    );
+    apply(&mut config.webhook_enabled, &defaults.webhook_enabled);
   }
 
   fn get_diff(
