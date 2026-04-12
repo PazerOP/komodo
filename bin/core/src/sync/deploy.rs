@@ -525,7 +525,6 @@ fn build_cache_for_stack<'a>(
         // Here can diff the changes, to see if they merit a redeploy.
 
         // See if any remote contents don't match deployed contents
-        #[allow(clippy::single_match)]
         match (
           &original.info.deployed_contents,
           &original.info.remote_contents,
@@ -565,7 +564,17 @@ fn build_cache_for_stack<'a>(
               }
             }
           }
-          // Maybe should handle other cases
+          (None, _) => {
+            cache.insert(
+              target,
+              Some((
+                String::from("stack deployed contents unknown"),
+                after,
+              )),
+            );
+            return Ok(());
+          }
+          // (Some(_), None) - no remote contents to compare, fall through to config diff
           _ => {}
         }
 
