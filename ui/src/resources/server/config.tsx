@@ -7,7 +7,7 @@ import Config from "@/ui/config";
 import { ConfigInput, ConfigList } from "@/ui/config/item";
 import ConfirmButton from "@/ui/confirm-button";
 import { ICONS } from "@/theme/icons";
-import { Group } from "@mantine/core";
+import { Group, Select, Stack, Text } from "@mantine/core";
 import { useIsServerAvailable } from "./hooks";
 import ConfigMaintenanceWindows from "@/components/maintenance-windows";
 
@@ -283,6 +283,112 @@ export default function ServerConfig({
                     }
                     disabled={disabled}
                   />
+                );
+              },
+            },
+          },
+        ],
+        "stack defaults": [
+          {
+            label: "Stack Defaults",
+            description:
+              "Default settings applied to Stacks assigned to this server during sync. " +
+              "Stacks that do not explicitly set a property will inherit the server default. " +
+              "Leaving a value as 'Default' uses the hardcoded default.",
+            fields: {
+              stack_defaults: (value, set) => {
+                const defaults = (value ?? {}) as Types.StackDefaults;
+                const updateDefaults = (
+                  patch: Partial<Types.StackDefaults>
+                ) => {
+                  set({
+                    stack_defaults: { ...defaults, ...patch },
+                  });
+                };
+                const options = [
+                  { value: "", label: "Default" },
+                  { value: "true", label: "Enabled" },
+                  { value: "false", label: "Disabled" },
+                ];
+                const toSelectValue = (v: boolean | undefined | null) =>
+                  v === true ? "true" : v === false ? "false" : "";
+                const fromSelectValue = (v: string | null) =>
+                  v === "true" ? true : v === "false" ? false : undefined;
+                const items: {
+                  key: keyof Types.StackDefaults;
+                  label: string;
+                  description: string;
+                  hardcodedDefault: string;
+                }[] = [
+                  {
+                    key: "auto_pull",
+                    label: "Auto Pull",
+                    description: "Pull images before deploying.",
+                    hardcodedDefault: "true",
+                  },
+                  {
+                    key: "auto_update",
+                    label: "Auto Update",
+                    description:
+                      "Automatically redeploy when newer images are found.",
+                    hardcodedDefault: "false",
+                  },
+                  {
+                    key: "auto_update_all_services",
+                    label: "Auto Update All Services",
+                    description:
+                      "Redeploy all services (not just updated ones) on auto update.",
+                    hardcodedDefault: "false",
+                  },
+                  {
+                    key: "poll_for_updates",
+                    label: "Poll For Updates",
+                    description: "Poll for image updates.",
+                    hardcodedDefault: "false",
+                  },
+                  {
+                    key: "send_alerts",
+                    label: "Send Alerts",
+                    description: "Send stack state change alerts.",
+                    hardcodedDefault: "true",
+                  },
+                  {
+                    key: "webhook_enabled",
+                    label: "Webhook Enabled",
+                    description: "Accept incoming webhook triggers.",
+                    hardcodedDefault: "true",
+                  },
+                ];
+                return (
+                  <Stack gap="sm">
+                    {items.map(
+                      ({ key, label, description, hardcodedDefault }) => (
+                        <Group key={key} justify="space-between" wrap="nowrap">
+                          <div style={{ flex: 1 }}>
+                            <Text size="sm" fw={500}>
+                              {label}
+                            </Text>
+                            <Text size="xs" c="dimmed">
+                              {description} (hardcoded default:{" "}
+                              {hardcodedDefault})
+                            </Text>
+                          </div>
+                          <Select
+                            data={options}
+                            value={toSelectValue(defaults[key])}
+                            onChange={(v) =>
+                              updateDefaults({
+                                [key]: fromSelectValue(v),
+                              })
+                            }
+                            disabled={disabled}
+                            w={130}
+                            allowDeselect={false}
+                          />
+                        </Group>
+                      )
+                    )}
+                  </Stack>
                 );
               },
             },

@@ -87,6 +87,12 @@ pub trait ResourceSyncTrait: ToToml + Sized {
     )
   }
 
+  /// Apply parent-resource-level defaults to the partial config.
+  /// Called BEFORE the round-trip conversion that fills hardcoded defaults,
+  /// so server defaults override hardcoded defaults but are overridden by
+  /// explicit config set in the TOML.
+  fn apply_resource_defaults(_config: &mut Self::PartialConfig) {}
+
   /// Apply any changes to incoming toml partial config
   /// before it is diffed against existing config
   fn validate_partial_config(_config: &mut Self::PartialConfig) {}
