@@ -28,7 +28,7 @@ jobs:
         uses: wow-look-at-my/actions@ghcr-push#latest
         with:
           image: ghcr.io/pazerop/komodo-core:latest
-          keep: '10'
+          keep: 10
 
       - name: Push Core image (sha tag)
         uses: wow-look-at-my/actions@ghcr/steps/push#latest
@@ -58,7 +58,7 @@ jobs:
         uses: wow-look-at-my/actions@ghcr-push#latest
         with:
           image: ghcr.io/pazerop/komodo-periphery:latest
-          keep: '10'
+          keep: 10
 
       - name: Push Periphery image (sha tag)
         uses: wow-look-at-my/actions@ghcr/steps/push#latest
