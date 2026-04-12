@@ -574,8 +574,29 @@ fn build_cache_for_stack<'a>(
             );
             return Ok(());
           }
-          // (Some(_), None) - no remote contents to compare, fall through to config diff
-          _ => {}
+          (Some(_), None) => {
+            // For repo-based or files-on-host stacks, remote_contents
+            // should always be populated. If it's None, something is
+            // wrong — trigger deploy to surface the error.
+            // For UI-based stacks, remote_contents is intentionally
+            // None (compose content lives in config.file_contents),
+            // so fall through to the config diff below.
+            if original.config.files_on_host
+              || !original.config.linked_repo.is_empty()
+              || !original.config.repo.is_empty()
+            {
+              cache.insert(
+                target,
+                Some((
+                  String::from(
+                    "stack remote contents not available",
+                  ),
+                  after,
+                )),
+              );
+              return Ok(());
+            }
+          }
         }
 
         // Merge toml resource config (partial) onto default resource config.
