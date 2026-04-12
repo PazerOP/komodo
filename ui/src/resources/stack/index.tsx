@@ -278,6 +278,50 @@ export const StackComponents: RequiredResourceComponents<
         </Box>
       );
     },
+    DegradedState: ({ id }) => {
+      const stack = useFullStack(id);
+      const info = stack?.info;
+      const config = stack?.config;
+      if (!info || !config) return null;
+
+      const isDown =
+        info.state === Types.StackState.Down ||
+        info.state === Types.StackState.Unknown;
+      if (isDown) return null;
+
+      const isRepoBased =
+        config.files_on_host ||
+        !!config.linked_repo ||
+        !!config.repo;
+
+      const missingDeployed = !info.deployed_contents;
+      const missingRemote = isRepoBased && !info.remote_contents;
+
+      if (!missingDeployed && !missingRemote) return null;
+
+      const message = missingDeployed
+        ? "Komodo has no record of what was deployed to this stack. " +
+          "Auto-deploy via resource sync cannot detect changes. " +
+          "Manually deploy the stack once to fix this."
+        : "Remote compose file contents are not available. " +
+          "Check that the linked repo or server is accessible. " +
+          "Auto-deploy via resource sync cannot detect file changes.";
+
+      return (
+        <Box>
+          <HoverCard width={350} position="bottom-start">
+            <HoverCard.Target>
+              <Button variant="filled" color="yellow" c="dark">
+                Deploy Tracking Unavailable
+              </Button>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text>{message}</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        </Box>
+      );
+    },
     ProjectMissing: ({ id }) => {
       const info = useStack(id)?.info;
       const state = info?.state ?? Types.StackState.Unknown;
