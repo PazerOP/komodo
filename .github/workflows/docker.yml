@@ -1,0 +1,66 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docker-core:
+    name: Build & Push Core
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Core image
+        run: |
+          docker build \
+            -f bin/core/aio.Dockerfile \
+            -t ghcr.io/pazerop/komodo-core:latest \
+            -t ghcr.io/pazerop/komodo-core:${{ github.sha }} \
+            .
+
+      - name: Push Core image
+        uses: wow-look-at-my/actions@ghcr-push#latest
+        with:
+          image: ghcr.io/pazerop/komodo-core:latest
+          keep: 10
+
+      - name: Push Core image (sha tag)
+        uses: wow-look-at-my/actions@ghcr/steps/push#latest
+        with:
+          image: ghcr.io/pazerop/komodo-core:${{ github.sha }}
+
+  docker-periphery:
+    name: Build & Push Periphery
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Periphery image
+        run: |
+          docker build \
+            -f bin/periphery/aio.Dockerfile \
+            -t ghcr.io/pazerop/komodo-periphery:latest \
+            -t ghcr.io/pazerop/komodo-periphery:${{ github.sha }} \
+            .
+
+      - name: Push Periphery image
+        uses: wow-look-at-my/actions@ghcr-push#latest
+        with:
+          image: ghcr.io/pazerop/komodo-periphery:latest
+          keep: 10
+
+      - name: Push Periphery image (sha tag)
+        uses: wow-look-at-my/actions@ghcr/steps/push#latest
+        with:
+          image: ghcr.io/pazerop/komodo-periphery:${{ github.sha }}
