@@ -588,9 +588,7 @@ fn build_cache_for_stack<'a>(
               cache.insert(
                 target,
                 Some((
-                  String::from(
-                    "stack remote contents not available",
-                  ),
+                  String::from("stack remote contents not available"),
                   after,
                 )),
               );
