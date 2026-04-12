@@ -104,6 +104,42 @@ impl ResourceSyncTrait for Deployment {
 impl ExecuteResourceSync for Deployment {}
 
 impl ResourceSyncTrait for Stack {
+  fn apply_resource_defaults(config: &mut Self::PartialConfig) {
+    let server_name = match &config.server_id {
+      Some(name) if !name.is_empty() => name.clone(),
+      _ => return,
+    };
+
+    let all = all_resources_cache().load();
+
+    // Cache is keyed by server ID; TOML uses names. Find by name.
+    let server =
+      match all.servers.values().find(|s| s.name == server_name) {
+        Some(s) => s,
+        None => return,
+      };
+
+    let defaults = &server.config.stack_defaults;
+
+    fn apply(field: &mut Option<bool>, default: &Option<bool>) {
+      if field.is_none() {
+        if let Some(v) = default {
+          *field = Some(*v);
+        }
+      }
+    }
+
+    apply(&mut config.auto_pull, &defaults.auto_pull);
+    apply(&mut config.poll_for_updates, &defaults.poll_for_updates);
+    apply(&mut config.auto_update, &defaults.auto_update);
+    apply(
+      &mut config.auto_update_all_services,
+      &defaults.auto_update_all_services,
+    );
+    apply(&mut config.send_alerts, &defaults.send_alerts);
+    apply(&mut config.webhook_enabled, &defaults.webhook_enabled);
+  }
+
   fn get_diff(
     mut original: Self::Config,
     update: Self::PartialConfig,

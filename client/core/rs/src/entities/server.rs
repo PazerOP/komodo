@@ -253,6 +253,37 @@ pub struct ServerConfig {
   #[serde(default)]
   #[builder(default)]
   pub maintenance_windows: Vec<MaintenanceWindow>,
+
+  /// Default settings for Stacks assigned to this server.
+  /// Any property set here will be used as the default for Stacks
+  /// that do not explicitly set that property.
+  #[serde(default)]
+  #[builder(default)]
+  pub stack_defaults: StackDefaults,
+}
+
+/// Default values for Stack properties on this Server.
+/// When a Stack is assigned to this Server and does not explicitly
+/// set a property, the server default is used instead of the
+/// hardcoded default.
+#[typeshare]
+#[derive(
+  Debug, Clone, Default, Serialize, Deserialize, PartialEq,
+)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
+pub struct StackDefaults {
+  /// Default for stack `auto_pull`. Hardcoded default: true.
+  pub auto_pull: Option<bool>,
+  /// Default for stack `poll_for_updates`. Hardcoded default: false.
+  pub poll_for_updates: Option<bool>,
+  /// Default for stack `auto_update`. Hardcoded default: false.
+  pub auto_update: Option<bool>,
+  /// Default for stack `auto_update_all_services`. Hardcoded default: false.
+  pub auto_update_all_services: Option<bool>,
+  /// Default for stack `send_alerts`. Hardcoded default: true.
+  pub send_alerts: Option<bool>,
+  /// Default for stack `webhook_enabled`. Hardcoded default: true.
+  pub webhook_enabled: Option<bool>,
 }
 
 impl ServerConfig {
@@ -336,6 +367,7 @@ impl Default for ServerConfig {
       disk_warning: default_disk_warning(),
       disk_critical: default_disk_critical(),
       maintenance_windows: Default::default(),
+      stack_defaults: Default::default(),
     }
   }
 }

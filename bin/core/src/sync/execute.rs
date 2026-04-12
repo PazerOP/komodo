@@ -67,6 +67,10 @@ pub async fn get_updates_for_execution<
   }
 
   for mut resource in resources {
+    // Apply server-level defaults before the round-trip.
+    // At this point, None means "not set in TOML".
+    Resource::apply_resource_defaults(&mut resource.config);
+
     match map.get(&resource.name) {
       Some(original) => {
         // First merge toml resource config (partial) onto default resource config.

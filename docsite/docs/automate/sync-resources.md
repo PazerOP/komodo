@@ -33,6 +33,14 @@ tags = ["prod"]
 address = "http://localhost:8120"
 region = "AshburnDc1"
 enabled = true # default: false
+
+# Optional: set default Stack settings for this server.
+# Stacks assigned to this server inherit these defaults
+# unless they explicitly override a property.
+# Priority: hardcoded defaults < server stack_defaults < stack-specific config.
+[server.config.stack_defaults]
+auto_update = true        # hardcoded default: false
+send_alerts = true        # hardcoded default: true
 ```
 
 ### Swarm
@@ -166,6 +174,12 @@ labels = "deployment.type = logger"
 
 - [Stack config schema](https://docs.rs/komodo_client/latest/komodo_client/entities/stack/struct.StackConfig.html)
 
+:::tip Server Stack Defaults
+Boolean properties like `auto_update`, `auto_pull`, `send_alerts`, `webhook_enabled`, `poll_for_updates`, and `auto_update_all_services`
+can be configured as defaults on the Server (see the `[server.config.stack_defaults]` section above).
+When a Stack is synced, the priority ordering is: **hardcoded defaults &lt; server stack_defaults &lt; stack-specific config**.
+:::
+
 ```toml
 [[stack]]
 name = "test-stack"
@@ -179,6 +193,7 @@ file_paths = ["mongo.yaml", "redis.yaml"]
 git_provider = "git.mogh.tech"
 git_account = "mbecker20" # clone private repo by specifying account
 repo = "mbecker20/stack_test"
+# auto_update is not set here, so it inherits from server-prod's stack_defaults
 ```
 
 ### Procedure
