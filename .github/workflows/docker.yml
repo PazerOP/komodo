@@ -37,8 +37,11 @@ jobs:
           keep: 10
 
       - name: Push Core image (sha tag)
-        shell: bash
-        run: docker push "ghcr.io/pazerop/komodo-core:${{ github.event.workflow_run.head_sha }}"
+        uses: wow-look-at-my/actions@ghcr-push#latest
+        with:
+          image: ghcr.io/pazerop/komodo-core:${{ github.event.workflow_run.head_sha }}
+          keep: 10
+          prune: false
 
   docker-periphery:
     name: Build & Push Periphery
@@ -70,5 +73,8 @@ jobs:
           keep: 10
 
       - name: Push Periphery image (sha tag)
-        shell: bash
-        run: docker push "ghcr.io/pazerop/komodo-periphery:${{ github.event.workflow_run.head_sha }}"
+        uses: wow-look-at-my/actions@ghcr-push#latest
+        with:
+          image: ghcr.io/pazerop/komodo-periphery:${{ github.event.workflow_run.head_sha }}
+          keep: 10
+          prune: false
