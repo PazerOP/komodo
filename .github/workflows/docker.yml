@@ -20,22 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: wow-look-at-my/actions@ghcr-login#latest
-        if: github.ref == 'refs/heads/main'
-
-      - name: Build and push
-        run: |
-          docker buildx build \
-            -f bin/core/aio.Dockerfile \
-            -t ghcr.io/pazerop/komodo-core:latest \
-            ${{ github.ref == 'refs/heads/main' && '--push' || '' }} \
-            .
-
-      - uses: wow-look-at-my/actions@ghcr-prune#latest
-        if: github.ref == 'refs/heads/main'
+      - uses: wow-look-at-my/actions@ghcr#latest
         with:
           image: ghcr.io/pazerop/komodo-core:latest
-          keep: 10
+          dockerfile: bin/core/aio.Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   docker-periphery:
     name: Build & Push Periphery
@@ -49,19 +38,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: wow-look-at-my/actions@ghcr-login#latest
-        if: github.ref == 'refs/heads/main'
-
-      - name: Build and push
-        run: |
-          docker buildx build \
-            -f bin/periphery/aio.Dockerfile \
-            -t ghcr.io/pazerop/komodo-periphery:latest \
-            ${{ github.ref == 'refs/heads/main' && '--push' || '' }} \
-            .
-
-      - uses: wow-look-at-my/actions@ghcr-prune#latest
-        if: github.ref == 'refs/heads/main'
+      - uses: wow-look-at-my/actions@ghcr#latest
         with:
           image: ghcr.io/pazerop/komodo-periphery:latest
-          keep: 10
+          dockerfile: bin/periphery/aio.Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
