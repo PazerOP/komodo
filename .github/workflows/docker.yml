@@ -1,12 +1,15 @@
 name: Docker
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
 
 jobs:
   docker-core:
     name: Build & Push Core
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     permissions:
@@ -16,13 +19,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Build Core image
         run: |
           docker build \
             -f bin/core/aio.Dockerfile \
             -t ghcr.io/pazerop/komodo-core:latest \
-            -t ghcr.io/pazerop/komodo-core:${{ github.sha }} \
+            -t ghcr.io/pazerop/komodo-core:${{ github.event.workflow_run.head_sha }} \
             .
 
       - name: Push Core image
@@ -33,10 +38,11 @@ jobs:
 
       - name: Push Core image (sha tag)
         shell: bash
-        run: docker push "ghcr.io/pazerop/komodo-core:${{ github.sha }}"
+        run: docker push "ghcr.io/pazerop/komodo-core:${{ github.event.workflow_run.head_sha }}"
 
   docker-periphery:
     name: Build & Push Periphery
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     permissions:
@@ -46,13 +52,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Build Periphery image
         run: |
           docker build \
             -f bin/periphery/aio.Dockerfile \
             -t ghcr.io/pazerop/komodo-periphery:latest \
-            -t ghcr.io/pazerop/komodo-periphery:${{ github.sha }} \
+            -t ghcr.io/pazerop/komodo-periphery:${{ github.event.workflow_run.head_sha }} \
             .
 
       - name: Push Periphery image
@@ -63,4 +71,4 @@ jobs:
 
       - name: Push Periphery image (sha tag)
         shell: bash
-        run: docker push "ghcr.io/pazerop/komodo-periphery:${{ github.sha }}"
+        run: docker push "ghcr.io/pazerop/komodo-periphery:${{ github.event.workflow_run.head_sha }}"
