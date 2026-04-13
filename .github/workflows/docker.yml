@@ -22,8 +22,8 @@ jobs:
 
       - uses: wow-look-at-my/actions@ghcr#latest
         with:
-          image: ghcr.io/pazerop/komodo-core:latest
-          dockerfile: bin/core/aio.Dockerfile
+          push_image: ghcr.io/pazerop/komodo-core:latest
+          build_dockerfile: bin/core/aio.Dockerfile
           push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   docker-periphery:
@@ -40,6 +40,6 @@ jobs:
 
       - uses: wow-look-at-my/actions@ghcr#latest
         with:
-          image: ghcr.io/pazerop/komodo-periphery:latest
-          dockerfile: bin/periphery/aio.Dockerfile
+          push_image: ghcr.io/pazerop/komodo-periphery:latest
+          build_dockerfile: bin/periphery/aio.Dockerfile
           push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
