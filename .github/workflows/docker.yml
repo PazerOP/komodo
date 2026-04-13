@@ -22,10 +22,22 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - uses: wow-look-at-my/actions@docker-publish#latest
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: wow-look-at-my/actions@ghcr-login#latest
+
+      - name: Build and push
+        run: |
+          docker buildx build \
+            -f bin/core/aio.Dockerfile \
+            -t ghcr.io/pazerop/komodo-core:latest \
+            --push \
+            .
+
+      - uses: wow-look-at-my/actions@ghcr-prune#latest
         with:
-          dockerfile: bin/core/aio.Dockerfile
-          image: ghcr.io/pazerop/komodo-core
+          image: ghcr.io/pazerop/komodo-core:latest
+          keep: 10
 
   docker-periphery:
     name: Build & Push Periphery
@@ -42,7 +54,19 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - uses: wow-look-at-my/actions@docker-publish#latest
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: wow-look-at-my/actions@ghcr-login#latest
+
+      - name: Build and push
+        run: |
+          docker buildx build \
+            -f bin/periphery/aio.Dockerfile \
+            -t ghcr.io/pazerop/komodo-periphery:latest \
+            --push \
+            .
+
+      - uses: wow-look-at-my/actions@ghcr-prune#latest
         with:
-          dockerfile: bin/periphery/aio.Dockerfile
-          image: ghcr.io/pazerop/komodo-periphery
+          image: ghcr.io/pazerop/komodo-periphery:latest
+          keep: 10
