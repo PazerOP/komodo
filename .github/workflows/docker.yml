@@ -22,26 +22,10 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Build Core image
-        run: |
-          docker build \
-            -f bin/core/aio.Dockerfile \
-            -t ghcr.io/pazerop/komodo-core:latest \
-            -t ghcr.io/pazerop/komodo-core:${{ github.event.workflow_run.head_sha }} \
-            .
-
-      - name: Push Core image
-        uses: wow-look-at-my/actions@ghcr-push#latest
+      - uses: wow-look-at-my/actions@docker-publish#latest
         with:
-          image: ghcr.io/pazerop/komodo-core:latest
-          keep: 10
-
-      - name: Push Core image (sha tag)
-        uses: wow-look-at-my/actions@ghcr-push#latest
-        with:
-          image: ghcr.io/pazerop/komodo-core:${{ github.event.workflow_run.head_sha }}
-          keep: 10
-          prune: false
+          dockerfile: bin/core/aio.Dockerfile
+          image: ghcr.io/pazerop/komodo-core
 
   docker-periphery:
     name: Build & Push Periphery
@@ -58,23 +42,7 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Build Periphery image
-        run: |
-          docker build \
-            -f bin/periphery/aio.Dockerfile \
-            -t ghcr.io/pazerop/komodo-periphery:latest \
-            -t ghcr.io/pazerop/komodo-periphery:${{ github.event.workflow_run.head_sha }} \
-            .
-
-      - name: Push Periphery image
-        uses: wow-look-at-my/actions@ghcr-push#latest
+      - uses: wow-look-at-my/actions@docker-publish#latest
         with:
-          image: ghcr.io/pazerop/komodo-periphery:latest
-          keep: 10
-
-      - name: Push Periphery image (sha tag)
-        uses: wow-look-at-my/actions@ghcr-push#latest
-        with:
-          image: ghcr.io/pazerop/komodo-periphery:${{ github.event.workflow_run.head_sha }}
-          keep: 10
-          prune: false
+          dockerfile: bin/periphery/aio.Dockerfile
+          image: ghcr.io/pazerop/komodo-periphery
