@@ -36,6 +36,48 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
 
+  docker-core:
+    name: Docker Core
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build Core image
+        run: |
+          docker buildx build \
+            -f bin/core/aio.Dockerfile \
+            -t ghcr.io/pazerop/komodo-core:ci-test \
+            .
+
+  docker-periphery:
+    name: Docker Periphery
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build Periphery image
+        run: |
+          docker buildx build \
+            -f bin/periphery/aio.Dockerfile \
+            -t ghcr.io/pazerop/komodo-periphery:ci-test \
+            .
+
   fmt:
     name: Format
     runs-on: ubuntu-latest
