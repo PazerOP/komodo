@@ -23,16 +23,13 @@ jobs:
       - uses: wow-look-at-my/actions@ghcr-login#latest
         if: github.ref == 'refs/heads/main'
 
-      - name: Build
+      - name: Build and push
         run: |
-          docker build \
+          docker buildx build \
             -f bin/core/aio.Dockerfile \
             -t ghcr.io/pazerop/komodo-core:latest \
+            ${{ github.ref == 'refs/heads/main' && '--push' || '' }} \
             .
-
-      - name: Push
-        if: github.ref == 'refs/heads/main'
-        run: docker push ghcr.io/pazerop/komodo-core:latest
 
       - uses: wow-look-at-my/actions@ghcr-prune#latest
         if: github.ref == 'refs/heads/main'
@@ -55,16 +52,13 @@ jobs:
       - uses: wow-look-at-my/actions@ghcr-login#latest
         if: github.ref == 'refs/heads/main'
 
-      - name: Build
+      - name: Build and push
         run: |
-          docker build \
+          docker buildx build \
             -f bin/periphery/aio.Dockerfile \
             -t ghcr.io/pazerop/komodo-periphery:latest \
+            ${{ github.ref == 'refs/heads/main' && '--push' || '' }} \
             .
-
-      - name: Push
-        if: github.ref == 'refs/heads/main'
-        run: docker push ghcr.io/pazerop/komodo-periphery:latest
 
       - uses: wow-look-at-my/actions@ghcr-prune#latest
         if: github.ref == 'refs/heads/main'
