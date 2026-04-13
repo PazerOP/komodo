@@ -280,13 +280,14 @@ export const StackComponents: RequiredResourceComponents<
     },
     DegradedState: ({ id }) => {
       const stack = useFullStack(id);
+      const listItem = useStack(id);
       const info = stack?.info;
       const config = stack?.config;
       if (!info || !config) return null;
 
       const isDown =
-        info.state === Types.StackState.Down ||
-        info.state === Types.StackState.Unknown;
+        listItem?.info.state === Types.StackState.Down ||
+        listItem?.info.state === Types.StackState.Unknown;
       if (isDown) return null;
 
       const isRepoBased =
