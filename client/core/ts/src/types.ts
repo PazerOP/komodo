@@ -2343,6 +2343,33 @@ export interface ServerConfig {
 	disk_critical: number;
 	/** Scheduled maintenance windows during which alerts will be suppressed. */
 	maintenance_windows?: MaintenanceWindow[];
+	/**
+	 * Default settings for Stacks assigned to this server.
+	 * Any property set here will be used as the default for Stacks
+	 * that do not explicitly set that property.
+	 */
+	stack_defaults: StackDefaults;
+}
+
+/**
+ * Default values for Stack properties on this Server.
+ * When a Stack is assigned to this Server and does not explicitly
+ * set a property, the server default is used instead of the
+ * hardcoded default.
+ */
+export interface StackDefaults {
+	/** Default for stack `auto_pull`. Hardcoded default: true. */
+	auto_pull?: boolean;
+	/** Default for stack `poll_for_updates`. Hardcoded default: false. */
+	poll_for_updates?: boolean;
+	/** Default for stack `auto_update`. Hardcoded default: false. */
+	auto_update?: boolean;
+	/** Default for stack `auto_update_all_services`. Hardcoded default: false. */
+	auto_update_all_services?: boolean;
+	/** Default for stack `send_alerts`. Hardcoded default: true. */
+	send_alerts?: boolean;
+	/** Default for stack `webhook_enabled`. Hardcoded default: true. */
+	webhook_enabled?: boolean;
 }
 
 export interface ServerInfo {
