@@ -120,7 +120,9 @@ async fn get_repo(
   // run `git-crypt unlock` in the clone so encrypted files are readable
   // before read_resources is called.
   if let Ok(key_file) = std::env::var("KOMODO_GIT_CRYPT_KEY_FILE") {
-    if !key_file.is_empty() && std::path::Path::new(&key_file).is_file() {
+    if !key_file.is_empty()
+      && std::path::Path::new(&key_file).is_file()
+    {
       let output = tokio::process::Command::new("git-crypt")
         .arg("unlock")
         .arg(&key_file)
@@ -131,13 +133,17 @@ async fn get_repo(
         Ok(out) if out.status.success() => {
           logs.push(Log::simple(
             "git-crypt unlock",
-            format!("Unlocked repo at {repo_path:?} with key {key_file}"),
+            format!(
+              "Unlocked repo at {repo_path:?} with key {key_file}"
+            ),
           ));
         }
         Ok(out) => {
           let stderr = String::from_utf8_lossy(&out.stderr);
           return Ok(RemoteResources {
-            resources: Err(anyhow!("git-crypt unlock failed: {stderr}")),
+            resources: Err(anyhow!(
+              "git-crypt unlock failed: {stderr}"
+            )),
             files: Vec::new(),
             file_errors: vec![SyncFileContents {
               resource_path: String::from("git-crypt error"),
