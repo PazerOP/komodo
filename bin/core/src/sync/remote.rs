@@ -116,6 +116,63 @@ async fn get_repo(
     });
   }
 
+  // If KOMODO_GIT_CRYPT_KEY_FILE is set and points to a regular file,
+  // run `git-crypt unlock` in the clone so encrypted files are readable
+  // before read_resources is called.
+  if let Ok(key_file) = std::env::var("KOMODO_GIT_CRYPT_KEY_FILE") {
+    if !key_file.is_empty()
+      && std::path::Path::new(&key_file).is_file()
+    {
+      let output = tokio::process::Command::new("git-crypt")
+        .arg("unlock")
+        .arg(&key_file)
+        .current_dir(&repo_path)
+        .output()
+        .await;
+      match output {
+        Ok(out) if out.status.success() => {
+          logs.push(Log::simple(
+            "git-crypt unlock",
+            format!(
+              "Unlocked repo at {repo_path:?} with key {key_file}"
+            ),
+          ));
+        }
+        Ok(out) => {
+          let stderr = String::from_utf8_lossy(&out.stderr);
+          return Ok(RemoteResources {
+            resources: Err(anyhow!(
+              "git-crypt unlock failed: {stderr}"
+            )),
+            files: Vec::new(),
+            file_errors: vec![SyncFileContents {
+              resource_path: String::from("git-crypt error"),
+              path: key_file,
+              contents: stderr.into_owned(),
+            }],
+            logs,
+            hash: None,
+            message: None,
+          });
+        }
+        Err(e) => {
+          return Ok(RemoteResources {
+            resources: Err(anyhow!("failed to spawn git-crypt: {e}")),
+            files: Vec::new(),
+            file_errors: vec![SyncFileContents {
+              resource_path: String::from("git-crypt error"),
+              path: key_file,
+              contents: e.to_string(),
+            }],
+            logs,
+            hash: None,
+            message: None,
+          });
+        }
+      }
+    }
+  }
+
   let (mut files, mut file_errors) = (Vec::new(), Vec::new());
   let resources = super::file::read_resources(
     &repo_path,
