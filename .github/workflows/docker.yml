@@ -23,21 +23,11 @@ jobs:
       - name: Write build version
         run: git rev-parse --short HEAD > build_support/BUILD_VERSION
 
-      - name: Build & push (main)
-        if: github.ref == 'refs/heads/main'
-        uses: wow-look-at-my/actions@ghcr#latest
+      - uses: wow-look-at-my/actions@ghcr#latest
         with:
-          login: 'true'
-          push: 'true'
+          login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           push_image: ghcr.io/pazerop/komodo-core:latest
-          build_dockerfile: bin/core/aio.Dockerfile
-
-      - name: Build only (non-main)
-        if: github.ref != 'refs/heads/main'
-        uses: wow-look-at-my/actions@ghcr#latest
-        with:
-          login: 'false'
-          push: 'false'
           build_dockerfile: bin/core/aio.Dockerfile
 
   docker-periphery:
@@ -55,19 +45,9 @@ jobs:
       - name: Write build version
         run: git rev-parse --short HEAD > build_support/BUILD_VERSION
 
-      - name: Build & push (main)
-        if: github.ref == 'refs/heads/main'
-        uses: wow-look-at-my/actions@ghcr#latest
+      - uses: wow-look-at-my/actions@ghcr#latest
         with:
-          login: 'true'
-          push: 'true'
+          login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           push_image: ghcr.io/pazerop/komodo-periphery:latest
-          build_dockerfile: bin/periphery/aio.Dockerfile
-
-      - name: Build only (non-main)
-        if: github.ref != 'refs/heads/main'
-        uses: wow-look-at-my/actions@ghcr#latest
-        with:
-          login: 'false'
-          push: 'false'
           build_dockerfile: bin/periphery/aio.Dockerfile
