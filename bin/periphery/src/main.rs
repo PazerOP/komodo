@@ -28,7 +28,7 @@ async fn app() -> anyhow::Result<()> {
   let startup_span = info_span!("PeripheryStartup");
 
   let mut handles = async {
-    info!("Komodo Periphery version: v{}", env!("KOMODO_VERSION"));
+    info!("Komodo Periphery version: v{}", env!("CARGO_PKG_VERSION"));
 
     if config.pretty_startup_config {
       info!("{:#?}", config.sanitized());

@@ -149,7 +149,7 @@ pub async fn alert_servers(
     // ========================
     // SERVER VERSION MISMATCH
     // ========================
-    let core_version = env!("KOMODO_VERSION");
+    let core_version = env!("CARGO_PKG_VERSION");
     let mismatched_server_version =
       if server_status.state != ServerState::Ok {
         None

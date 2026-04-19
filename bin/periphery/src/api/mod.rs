@@ -198,7 +198,7 @@ impl Resolve<Args> for GetVersion {
     _: &Args,
   ) -> anyhow::Result<GetVersionResponse> {
     Ok(GetVersionResponse {
-      version: env!("KOMODO_VERSION").to_string(),
+      version: env!("CARGO_PKG_VERSION").to_string(),
     })
   }
 }

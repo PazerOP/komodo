@@ -50,7 +50,7 @@ pub fn cli_config() -> &'static CliConfig {
       println!(
         "{}: Komodo CLI version: {}",
         "DEBUG".cyan(),
-        env!("KOMODO_VERSION").blue().bold()
+        env!("CARGO_PKG_VERSION").blue().bold()
       );
       println!(
         "{}: {}: {config_paths:?}",

@@ -20,13 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Write build version
-        run: git rev-parse --short HEAD > build_support/BUILD_VERSION
-
       - uses: wow-look-at-my/actions@ghcr#latest
         with:
           login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           push_image: ghcr.io/pazerop/komodo-core:latest
           build_dockerfile: bin/core/aio.Dockerfile
 
@@ -42,12 +38,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Write build version
-        run: git rev-parse --short HEAD > build_support/BUILD_VERSION
-
       - uses: wow-look-at-my/actions@ghcr#latest
         with:
           login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           push_image: ghcr.io/pazerop/komodo-periphery:latest
           build_dockerfile: bin/periphery/aio.Dockerfile

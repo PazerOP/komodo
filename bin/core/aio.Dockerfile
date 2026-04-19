@@ -6,15 +6,13 @@ RUN cargo install cargo-strip
 
 WORKDIR /builder
 COPY Cargo.toml Cargo.lock ./
+COPY ./.git ./.git
 COPY ./build_support ./build_support
 COPY ./lib ./lib
 COPY ./client/core/rs ./client/core/rs
 COPY ./client/periphery ./client/periphery
 COPY ./bin/core ./bin/core
 COPY ./bin/cli ./bin/cli
-
-ARG KOMODO_BUILD_VERSION=""
-ENV KOMODO_BUILD_VERSION=${KOMODO_BUILD_VERSION}
 
 # Compile app
 RUN cargo build -p komodo_core --release && \

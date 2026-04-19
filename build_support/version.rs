@@ -4,36 +4,18 @@ use std::process::Command;
 fn main() {
   let version = resolve_version()
     .unwrap_or_else(|| std::env::var("CARGO_PKG_VERSION").unwrap());
-  println!("cargo::rustc-env=KOMODO_VERSION={version}");
+  println!("cargo::rustc-env=CARGO_PKG_VERSION={version}");
 
-  println!("cargo::rerun-if-env-changed=KOMODO_BUILD_VERSION");
   let root = workspace_root();
   println!(
     "cargo::rerun-if-changed={}",
     root.join("build_support/version.rs").display()
   );
-  println!(
-    "cargo::rerun-if-changed={}",
-    root.join("build_support/BUILD_VERSION").display()
-  );
   emit_git_rerun_if_changed(&root);
 }
 
 fn resolve_version() -> Option<String> {
-  if let Ok(v) = std::env::var("KOMODO_BUILD_VERSION") {
-    let v = v.trim();
-    if !v.is_empty() {
-      return Some(v.to_string());
-    }
-  }
-  let root = workspace_root();
-  if let Ok(v) = std::fs::read_to_string(root.join("build_support/BUILD_VERSION")) {
-    let v = v.trim();
-    if !v.is_empty() {
-      return Some(v.to_string());
-    }
-  }
-  git_short_hash(&root)
+  git_short_hash(&workspace_root())
 }
 
 fn git_short_hash(dir: &Path) -> Option<String> {

@@ -326,7 +326,7 @@ impl Resolve<ReadArgs> for GetVersion {
     _: &ReadArgs,
   ) -> mogh_error::Result<GetVersionResponse> {
     Ok(GetVersionResponse {
-      version: env!("KOMODO_VERSION").to_string(),
+      version: env!("CARGO_PKG_VERSION").to_string(),
     })
   }
 }
