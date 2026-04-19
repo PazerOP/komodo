@@ -6,6 +6,7 @@ RUN cargo install cargo-strip
 
 WORKDIR /builder
 COPY Cargo.toml Cargo.lock ./
+COPY ./build_support ./build_support
 COPY ./lib ./lib
 COPY ./client/core/rs ./client/core/rs
 COPY ./client/periphery ./client/periphery
