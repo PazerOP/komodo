@@ -13,6 +13,9 @@ COPY ./bin/core ./bin/core
 COPY ./bin/periphery ./bin/periphery
 COPY ./bin/cli ./bin/cli
 
+ARG KOMODO_BUILD_VERSION=""
+ENV KOMODO_BUILD_VERSION=${KOMODO_BUILD_VERSION}
+
 # Compile bin
 RUN \
   cargo build -p komodo_core --release && \

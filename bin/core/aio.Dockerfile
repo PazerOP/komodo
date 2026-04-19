@@ -12,6 +12,9 @@ COPY ./client/periphery ./client/periphery
 COPY ./bin/core ./bin/core
 COPY ./bin/cli ./bin/cli
 
+ARG KOMODO_BUILD_VERSION=""
+ENV KOMODO_BUILD_VERSION=${KOMODO_BUILD_VERSION}
+
 # Compile app
 RUN cargo build -p komodo_core --release && \
   cargo build -p komodo_cli --release && \

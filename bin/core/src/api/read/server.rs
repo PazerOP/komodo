@@ -70,7 +70,7 @@ impl Resolve<ReadArgs> for GetServersSummary {
     )
     .await?;
 
-    let core_version = env!("CARGO_PKG_VERSION");
+    let core_version = env!("KOMODO_VERSION");
     let mut res = GetServersSummaryResponse::default();
 
     for server in servers {

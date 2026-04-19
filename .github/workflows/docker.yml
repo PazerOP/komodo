@@ -20,12 +20,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - id: version
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
       - uses: wow-look-at-my/actions@ghcr#latest
         with:
           login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           push_image: ghcr.io/pazerop/komodo-core:latest
           build_dockerfile: bin/core/aio.Dockerfile
           push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          build_args: |
+            KOMODO_BUILD_VERSION=${{ steps.version.outputs.short_sha }}
 
   docker-periphery:
     name: Build & Push Periphery
@@ -39,9 +44,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - id: version
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
       - uses: wow-look-at-my/actions@ghcr#latest
         with:
           login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           push_image: ghcr.io/pazerop/komodo-periphery:latest
           build_dockerfile: bin/periphery/aio.Dockerfile
           push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          build_args: |
+            KOMODO_BUILD_VERSION=${{ steps.version.outputs.short_sha }}
