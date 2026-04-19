@@ -20,17 +20,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - id: version
-        run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Write build version
+        run: git rev-parse --short HEAD > build_support/BUILD_VERSION
 
-      - uses: wow-look-at-my/actions@ghcr#latest
+      - name: Build & push (main)
+        if: github.ref == 'refs/heads/main'
+        uses: wow-look-at-my/actions@ghcr#latest
         with:
-          login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          login: 'true'
+          push: 'true'
           push_image: ghcr.io/pazerop/komodo-core:latest
           build_dockerfile: bin/core/aio.Dockerfile
-          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-          build_args: |
-            KOMODO_BUILD_VERSION=${{ steps.version.outputs.short_sha }}
+
+      - name: Build only (non-main)
+        if: github.ref != 'refs/heads/main'
+        uses: wow-look-at-my/actions@ghcr#latest
+        with:
+          login: 'false'
+          push: 'false'
+          build_dockerfile: bin/core/aio.Dockerfile
 
   docker-periphery:
     name: Build & Push Periphery
@@ -44,14 +52,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - id: version
-        run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Write build version
+        run: git rev-parse --short HEAD > build_support/BUILD_VERSION
 
-      - uses: wow-look-at-my/actions@ghcr#latest
+      - name: Build & push (main)
+        if: github.ref == 'refs/heads/main'
+        uses: wow-look-at-my/actions@ghcr#latest
         with:
-          login: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          login: 'true'
+          push: 'true'
           push_image: ghcr.io/pazerop/komodo-periphery:latest
           build_dockerfile: bin/periphery/aio.Dockerfile
-          push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-          build_args: |
-            KOMODO_BUILD_VERSION=${{ steps.version.outputs.short_sha }}
+
+      - name: Build only (non-main)
+        if: github.ref != 'refs/heads/main'
+        uses: wow-look-at-my/actions@ghcr#latest
+        with:
+          login: 'false'
+          push: 'false'
+          build_dockerfile: bin/periphery/aio.Dockerfile

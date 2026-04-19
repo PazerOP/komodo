@@ -12,6 +12,10 @@ fn main() {
     "cargo::rerun-if-changed={}",
     root.join("build_support/version.rs").display()
   );
+  println!(
+    "cargo::rerun-if-changed={}",
+    root.join("build_support/BUILD_VERSION").display()
+  );
   emit_git_rerun_if_changed(&root);
 }
 
@@ -22,7 +26,14 @@ fn resolve_version() -> Option<String> {
       return Some(v.to_string());
     }
   }
-  git_short_hash(&workspace_root())
+  let root = workspace_root();
+  if let Ok(v) = std::fs::read_to_string(root.join("build_support/BUILD_VERSION")) {
+    let v = v.trim();
+    if !v.is_empty() {
+      return Some(v.to_string());
+    }
+  }
+  git_short_hash(&root)
 }
 
 fn git_short_hash(dir: &Path) -> Option<String> {
